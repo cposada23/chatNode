@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chat en node.js</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" >
+</head>
+<body>
+	<div class="row">
+     <div class="col-xs-6 col-xs-offset-1">
+         <h2>Just chating</h2>
+         <p>
+            <label>Nombre:</label>
+            <input type="text" class="form-control" name="message" id="user" placeholder="escribe tu nombre..">
+        </p>
+        <p>
+            <label>Mensaje:</label>
+            <textarea class="form-control" name="field" id="field"></textarea>
+        </p>
+        <p>
+            <button class="btn btn-primary" type="button" id="send">Enviar</button>
+        </p>
+     </div>
+     <h2>Mensajes</h2>   
+     <div class="col-xs-4 jumbotron">
+        
+        <div id="content" class="">
+            
+        </div>   
+         
+     </div>   
+    </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    
+	window.onload = function() {
+ 
+        var messages = [];
+        var socket = io.connect('http://localhost:3000');
+        var field = document.getElementById("field");
+        var user = document.getElementById("user");
+        var sendButton = document.getElementById("send");
+        var content = document.getElementById("content");
+     
+        socket.on('message', function (data) {
+            if(data.message) {
+                messages.push(data);
+                var html = '';
+                for(var i=0; i<messages.length; i++) {
+                    if(user.value == messages[i].user)
+                    {
+                        html +=   'Tu: ' + messages[i].message + '<br />';
+                    }
+                    else
+                    {
+                        html += messages[i].user + ': ' + messages[i].message + '<br />';    
+                    }
+                    
+                }
+                content.innerHTML = html;
+            } else {
+                console.log("There is a problem:", data);
+            }
+        });
+     
+        sendButton.onclick = function() {
+            var text = field.value;
+            var name = user.value;
+            socket.emit('send', { message: text, user: name });
+        };
+     
+    }
+</script>
+
+</body>
+</html>
