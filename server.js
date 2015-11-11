@@ -10,7 +10,7 @@ app.get("/", function(req, res){
 });
  
 server.listen(port);
-console.log("Listening on port " + port);
+console.log("Escuchando el puerto" + port);
 
 var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
